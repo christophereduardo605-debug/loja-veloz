@@ -12,12 +12,21 @@ spec:
       labels:
         app: pedidos
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+
       containers:
         - name: pedidos
           image: loja-veloz-pedidos:latest
           imagePullPolicy: Never
+
           ports:
             - containerPort: 3001
+
           env:
             - name: DB_HOST
               value: "postgres"
@@ -32,6 +41,25 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3001
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: 3001
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
+
           resources:
             requests:
               cpu: "100m"
@@ -39,6 +67,13 @@ spec:
             limits:
               cpu: "500m"
               memory: "256Mi"
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+
 ---
 apiVersion: v1
 kind: Service

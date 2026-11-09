@@ -4,6 +4,11 @@ const { Pool } = require("pg");
 const app = express();
 app.use(express.json());
 
+// Verificação de vida da aplicação (Kubernetes Liveness)
+app.get("/live", (req, res) => {
+  res.json({ status: "alive", servico: "pedidos" });
+});
+
 const pool = new Pool({
   host: process.env.DB_HOST || "localhost",
   port: Number(process.env.DB_PORT || 5432),
@@ -12,6 +17,7 @@ const pool = new Pool({
   database: process.env.DB_NAME || "lojaveloz",
 });
 
+// Verificação de disponibilidade (Kubernetes Readiness)
 app.get("/health", async (req, res) => {
   try {
     await pool.query("SELECT 1");

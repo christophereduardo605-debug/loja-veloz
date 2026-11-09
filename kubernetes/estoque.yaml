@@ -12,12 +12,39 @@ spec:
       labels:
         app: estoque
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+
       containers:
         - name: estoque
           image: loja-veloz-estoque:latest
           imagePullPolicy: Never
+
           ports:
             - containerPort: 3003
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3003
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3003
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
+
           resources:
             requests:
               cpu: "100m"
@@ -25,6 +52,13 @@ spec:
             limits:
               cpu: "500m"
               memory: "256Mi"
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+
 ---
 apiVersion: v1
 kind: Service
