@@ -51,8 +51,12 @@ app.post("/estoque/reservar", (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 3003;
+if (require.main === module) {
+  const PORT = process.env.PORT || 3003;
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Serviço de Estoque rodando na porta ${PORT}`);
-});
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Serviço de Estoque rodando na porta ${PORT}`);
+  });
+}
+
+module.exports = { app };

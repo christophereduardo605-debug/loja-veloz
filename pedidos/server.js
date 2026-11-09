@@ -88,4 +88,8 @@ async function iniciar() {
   }
 }
 
-iniciar();
+if (require.main === module) {
+  iniciar();
+}
+
+module.exports = { app };

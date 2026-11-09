@@ -1,16 +1,20 @@
 {
   "name": "api-gateway",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "API Gateway do projeto Loja Veloz",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node --require ./tracing.js server.js",
+    "test": "node --test"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@opentelemetry/auto-instrumentations-node": "^0.83.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.301.0",
+    "@opentelemetry/sdk-node": "^0.301.0",
     "express": "^5.3.0",
     "http-proxy-middleware": "^4.2.1"
   }

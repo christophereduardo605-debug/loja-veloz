@@ -33,8 +33,12 @@ app.post("/pagamentos", (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 3002;
+if (require.main === module) {
+  const PORT = process.env.PORT || 3002;
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Serviço de Pagamentos rodando na porta ${PORT}`);
-});
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Serviço de Pagamentos rodando na porta ${PORT}`);
+  });
+}
+
+module.exports = { app };
