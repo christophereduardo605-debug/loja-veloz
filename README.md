@@ -238,3 +238,11 @@ Vídeo pitch do projeto, com duração máxima de 4 minutos.
 ## 13. Repositório
 
 https://github.com/christophereduardo605-debug/loja-veloz
+
+## 🎬 Vídeo Pitch
+
+Apresentação do projeto Loja Veloz, demonstrando a arquitetura de microsserviços, Docker, Kubernetes, CI/CD e observabilidade.
+
+**Duração:** 3 minutos e 40 segundos.
+
+**Link:** https://youtu.be/jDdiTysqaN8
