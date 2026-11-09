@@ -1,0 +1,69 @@
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      PEDIDOS_URL: http://pedidos:3001
+      PAGAMENTOS_URL: http://pagamentos:3002
+      ESTOQUE_URL: http://estoque:3003
+    depends_on:
+      - pedidos
+      - pagamentos
+      - estoque
+    networks:
+      - loja-network
+
+  pedidos:
+    build: ./pedidos
+    ports:
+      - "3001:3001"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: loja
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: lojaveloz
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - loja-network
+
+  pagamentos:
+    build: ./pagamentos
+    ports:
+      - "3002:3002"
+    networks:
+      - loja-network
+
+  estoque:
+    build: ./estoque
+    ports:
+      - "3003:3003"
+    networks:
+      - loja-network
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: loja
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no arquivo .env}
+      POSTGRES_DB: lojaveloz
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - loja-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U loja -d lojaveloz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  loja-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
